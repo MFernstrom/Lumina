@@ -1,0 +1,2 @@
+# Lumina
+Local Generative AI
