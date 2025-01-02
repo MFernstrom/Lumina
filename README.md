@@ -32,7 +32,7 @@ https://github.com/user-attachments/assets/165e3dee-b29f-4478-b9ef-4fb6d2df2485
 
 ### Contributing
 
-Contributions to **Lumina** are highly encouraged. Please feel free to submit issues, suggest new features, or create pull requests to expand the capabilities and robustness of the scripting engine.
+Contributions to **Lumina** are highly encouraged. Please feel free to submit issues, suggest new features, or create pull requests to expand the capabilities and robustness of the library.
 
 ### License
 
