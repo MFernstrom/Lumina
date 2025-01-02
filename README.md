@@ -70,7 +70,8 @@ var
 begin
   Lumina := TLumina.Create;
   try
-    if Lumina.LoadModel('C:\LLM\GGUF\gemma-2b.gguf', '', 8192, -1, 8) then
+    if Lumina.LoadModel('C:\LLM\GGUF\gemma-2-2b-it-abliterated-Q8_0.gguf',
+      '', 8192, -1, 8) then
     begin
       if Lumina.SimpleInference('What is the capital of Italy?') then
         WriteLn('Inference completed successfully.')
