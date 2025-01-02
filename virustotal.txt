@@ -1,0 +1,5 @@
+VirtusTotal report for Lumina Project
+=====================================
+
+Lumina.res:
+https://www.virustotal.com/gui/file/c5e68139a9152f544c79878cc551c0dfd043ca8faf1c49d6d72772a8be97cc1c
