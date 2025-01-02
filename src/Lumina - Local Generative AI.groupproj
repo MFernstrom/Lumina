@@ -1,18 +1,9 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{5443E0E9-68F4-4B2B-B4E1-B6A9A3009235}</ProjectGuid>
+        <ProjectGuid>{4EA3BFB9-BDA4-4113-883A-17BBCD36DA33}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="..\..\build\makedef\MakeDef.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="..\examples\testbed\Testbed.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="..\..\tests\test03\test03.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="..\..\tests\test04\test04.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -23,15 +14,6 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="MakeDef">
-        <MSBuild Projects="..\..\build\makedef\MakeDef.dproj"/>
-    </Target>
-    <Target Name="MakeDef:Clean">
-        <MSBuild Projects="..\..\build\makedef\MakeDef.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="MakeDef:Make">
-        <MSBuild Projects="..\..\build\makedef\MakeDef.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Testbed">
         <MSBuild Projects="..\examples\testbed\Testbed.dproj"/>
     </Target>
@@ -41,32 +23,14 @@
     <Target Name="Testbed:Make">
         <MSBuild Projects="..\examples\testbed\Testbed.dproj" Targets="Make"/>
     </Target>
-    <Target Name="test03">
-        <MSBuild Projects="..\..\tests\test03\test03.dproj"/>
-    </Target>
-    <Target Name="test03:Clean">
-        <MSBuild Projects="..\..\tests\test03\test03.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="test03:Make">
-        <MSBuild Projects="..\..\tests\test03\test03.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="test04">
-        <MSBuild Projects="..\..\tests\test04\test04.dproj"/>
-    </Target>
-    <Target Name="test04:Clean">
-        <MSBuild Projects="..\..\tests\test04\test04.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="test04:Make">
-        <MSBuild Projects="..\..\tests\test04\test04.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="MakeDef;Testbed;test03;test04"/>
+        <CallTarget Targets="Testbed"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="MakeDef:Clean;Testbed:Clean;test03:Clean;test04:Clean"/>
+        <CallTarget Targets="Testbed:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="MakeDef:Make;Testbed:Make;test03:Make;test04:Make"/>
+        <CallTarget Targets="Testbed:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

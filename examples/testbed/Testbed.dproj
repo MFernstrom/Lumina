@@ -1,10 +1,10 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{894FBC39-F55C-4BFD-ACCC-FA4633557A82}</ProjectGuid>
+        <ProjectGuid>{6293C7B8-E199-43F2-B775-4B23900449A6}</ProjectGuid>
         <ProjectVersion>20.3</ProjectVersion>
         <FrameworkType>None</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <ProjectName Condition="'$(ProjectName)'==''">Testbed</ProjectName>
         <TargetedPlatforms>2</TargetedPlatforms>
@@ -119,8 +119,6 @@
         </DelphiCompile>
         <DCCReference Include="UTestbed.pas"/>
         <DCCReference Include="..\..\src\Lumina.pas"/>
-        <DCCReference Include="..\..\src\Lumina.Deps.pas"/>
-        <DCCReference Include="..\..\src\Lumina.Common.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
