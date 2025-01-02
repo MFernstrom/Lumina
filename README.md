@@ -26,6 +26,10 @@ Delphi developers, the future of AI is here, and it’s **local**! Say hello to 
 ✨ **Lumina is Your AI Superpower**  
 Lumina is more than just a tool – it’s your gateway to the next generation of AI-enhanced software, all while keeping your data safe and local. Whether you’re creating tools, games, or business apps, **Lumina makes AI integration simple, efficient, and exciting**.  
 
+
+https://github.com/user-attachments/assets/165e3dee-b29f-4478-b9ef-4fb6d2df2485
+
+
 ### Contributing
 
 Contributions to **Callisto** are highly encouraged. Please feel free to submit issues, suggest new features, or create pull requests to expand the capabilities and robustness of the scripting engine.
