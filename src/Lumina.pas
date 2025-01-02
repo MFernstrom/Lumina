@@ -48,33 +48,91 @@
  Usage Notes:
  ============
  
- 1. Custom Model Templates:
-    Custom chat templates serve as predefined structures that format input and
-    output data in a way that aligns with the requirements of specific language
-    models. These templates dictate how roles (e.g., "user" and "assistant")
-    and their respective messages are presented, ensuring that the model can
-    correctly interpret the context and flow of the conversation. By
-    encapsulating information in a standardized format, templates provide
-    clarity and consistency, which are essential for models to generate
-    accurate and contextually appropriate responses.
+ * Obtaining Models:
+   There’s a link to the model card where you can download the Gemma model.
+   The "Any GGUF Model" link points to it. This is considered an
+   SLM (Small Language Model), so you can download the 8-bit quantized
+   version (Q8_0). For larger models, **Q4** is usually a better choice.
 
-    For example, the `CHATML_TEMPLATE` leverages tags like `<|im_start|>` and
-    `<|im_end|>` to delineate each message explicitly, which is beneficial for
-    multi-turn dialogues. The `GEMMA_TEMPLATE` adopts a minimalist approach,
-    using simple tags like `<start_of_turn>` and `<end_of_turn>` to separate
-    conversation turns, making it suitable for scenarios where concise
-    formatting suffices. Meanwhile, the `PHI_TEMPLATE` incorporates explicit
-    tags for roles and message boundaries, ensuring a high level of precision
-    in parsing and generating conversational data.
+ * GPU Usage and Model Loading:
+   If you want to use the GPU, ensure your graphics card has enough VRAM to
+   hold both the model and the context (any GPU that supports Vulkan is
+   compatible). You can control how many GPU layers to use with the
+   `AGPULayers` parameter in the `LoadModel` method.
+   - Setting `AGPULayers` to **-1** (default) uses all layers.
+   - If the model is too large for your GPU, you can offload layers to RAM by
+     setting `AGPULayers` to **0** or a lower number.
 
-    These templates are not rigid constructs but rather customizable tools that
-    developers can adapt to their specific needs. Lumina allows you to define
-    and pass in your custom chat formats, enabling seamless integration with
-    various models, each of which might have unique formatting requirements.
-    This flexibility is particularly valuable when working with different AI
-    systems or when building applications with diverse conversational
-    requirements, such as chatbots, customer support systems, or content
-    generation tools. 
+ * Model Availability:
+   The models are too large to be stored in the repository (2GB or more,
+   depending on the model and quantization). Hugging Face, often considered the
+   "GitHub for LLMs," hosts these models. Any GGUF model supported by
+   llama.cpp should work. The model card will typically specify the minimum
+   version of `llama.cpp` required. **Lumina** is always kept up to date with
+   these specifications.
+
+ * Customization and Callbacks:
+   Several callbacks can be set to customize behavior:
+   - Cancel Callback  : Allows you to control how to exit the inference loop.
+   - Info Callback    : Displays model information as it loads.
+   - Progress Callback: Reports the percentage of the model that has been
+     loaded.
+   - NextToken Callback: Sends each generated token. If not set, output will
+     simply display in the current console.
+
+ * Functionality and Future Updates:
+   Currently, the system supports **simple text inference**, handling one
+   question at a time. Future updates will expand to include:
+   - Chat functionality: Manage system and user prompts while
+     maintaining context.
+   - Retrieval-Augmented Generation (RAG): Enhance retrieval capabilities.
+   - Additional advanced features.
+
+ This release focuses on stability and providing minimal features to help you
+ get started with generative AI.
+
+ * Getting Started:
+   1. Download your preferred model and place it on your hard drive
+     (e.g., `C:/LLM/GGUF`).
+   2. Pass the full path of the model to the `LoadModel` method.
+   3. Set `AMaxThreads` to the number of threads you wish to use (limited to
+      the number of cores on your device).
+   4. Pass your question to `SimpleInference` and wait for a response.
+
+ By default, pressing **ESC** cancels inference; this can be customized in the
+ Cancel Callback. The `AMaxContext` parameter determines the maximum context
+ length for the model. Many models support an **8K context** or higher. The
+ model card on Hugging Face typically lists this information. Additionally,
+ the Info Callback displays all the model's metadata, including context length
+ and other details.
+ 
+ * Custom Model Templates:
+   Custom chat templates serve as predefined structures that format input and
+   output data in a way that aligns with the requirements of specific language
+   models. These templates dictate how roles (e.g., "user" and "assistant")
+   and their respective messages are presented, ensuring that the model can
+   correctly interpret the context and flow of the conversation. By
+   encapsulating information in a standardized format, templates provide
+   clarity and consistency, which are essential for models to generate
+   accurate and contextually appropriate responses.
+
+   For example, the `CHATML_TEMPLATE` leverages tags like `<|im_start|>` and
+   `<|im_end|>` to delineate each message explicitly, which is beneficial for
+   multi-turn dialogues. The `GEMMA_TEMPLATE` adopts a minimalist approach,
+   using simple tags like `<start_of_turn>` and `<end_of_turn>` to separate
+   conversation turns, making it suitable for scenarios where concise
+   formatting suffices. Meanwhile, the `PHI_TEMPLATE` incorporates explicit
+   tags for roles and message boundaries, ensuring a high level of precision
+   in parsing and generating conversational data.
+
+   These templates are not rigid constructs but rather customizable tools that
+   developers can adapt to their specific needs. Lumina allows you to define
+   and pass in your custom chat formats, enabling seamless integration with
+   various models, each of which might have unique formatting requirements.
+   This flexibility is particularly valuable when working with different AI
+   systems or when building applications with diverse conversational
+   requirements, such as chatbots, customer support systems, or content
+   generation tools. 
     
  ------------------------------------------------------------------------------
 

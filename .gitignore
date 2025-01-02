@@ -81,3 +81,5 @@ __recovery/
 modules/
 zip_latest_commit.cmd
 Lumina.zip
+*.dsv
+examples/testbed/Testbed.dsv
