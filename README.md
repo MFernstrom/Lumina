@@ -137,7 +137,7 @@ const
 ```
 
 - **{role}** - will be replaced with the role (user, assistant, etc.)
-- **{content}** - will be replaced with the content set to the model
+- **{content}** - will be replaced with the content sent to the model
 
 ### 🎮 GPU Optimization
 
@@ -172,7 +172,7 @@ https://github.com/user-attachments/assets/165e3dee-b29f-4478-b9ef-4fb6d2df2485
 ### 🛠️ Support and Resources
 
 - Report issues via the [Issue Tracker](https://github.com/tinyBigGAMES/Lumina/issues) 🐞.
-- Engage in discussions on the [Forum](https://github.com/tinyBigGAMES/Lumina/discussions) 💬.
+- Engage in discussions on the [Forum](https://github.com/tinyBigGAMES/Lumina/discussions) and [Discord](https://discord.gg/tPWjMwK) 💬.
 - Learn more at [Learn Delphi](https://learndelphi.org) 📚.
 
 ### 🤝 Contributing  
