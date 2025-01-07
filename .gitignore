@@ -83,3 +83,6 @@ zip_latest_commit.cmd
 Lumina.zip
 *.dsv
 examples/testbed/Testbed.dsv
+bin/example.db
+bin/test02.db
+

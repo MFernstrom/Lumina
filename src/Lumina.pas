@@ -700,6 +700,9 @@ const
   SQLITE_VEC_VERSION_MAJOR = 0;
   SQLITE_VEC_VERSION_MINOR = 6;
   SQLITE_VEC_VERSION_PATCH = 1;
+  SQLITE_LEMBED_VERSION = 'v0.0.1-alpha.8';
+  SQLITE_LEMBED_DATE = '2024-06-01';
+  SQLITE_LEMBED_SOURCE = '23fe651';
 
 type
   ggml_status = Integer;
@@ -3350,6 +3353,7 @@ var
   redirect_cerr_to_callback: procedure(callback: cerr_callback; user_data: Pointer); cdecl;
   restore_cerr: procedure(); cdecl;
   sqlite3_vec_init: function(db: Psqlite3; pzErrMsg: PPUTF8Char; const pApi: Psqlite3_api_routines): Integer; cdecl;
+  sqlite3_lembed_init: function(db: Psqlite3; pzErrMsg: PPUTF8Char; const pApi: Psqlite3_api_routines): Integer; cdecl;
 
 procedure GetExports(const aDLLHandle: THandle);
 
@@ -4609,6 +4613,7 @@ begin
   sqlite3_keyword_count := GetProcAddress(aDLLHandle, 'sqlite3_keyword_count');
   sqlite3_keyword_name := GetProcAddress(aDLLHandle, 'sqlite3_keyword_name');
   sqlite3_last_insert_rowid := GetProcAddress(aDLLHandle, 'sqlite3_last_insert_rowid');
+  sqlite3_lembed_init := GetProcAddress(aDLLHandle, 'sqlite3_lembed_init');
   sqlite3_libversion := GetProcAddress(aDLLHandle, 'sqlite3_libversion');
   sqlite3_libversion_number := GetProcAddress(aDLLHandle, 'sqlite3_libversion_number');
   sqlite3_limit := GetProcAddress(aDLLHandle, 'sqlite3_limit');

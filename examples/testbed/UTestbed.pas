@@ -152,8 +152,8 @@ var
   LQuestion: string;
   LModel: string;
 begin
-  LQuestion := function_call2;
-  //LQuestion := 'what is AI?';
+  //LQuestion := function_call2;
+  LQuestion := 'what is AI?';
 
   //LQuestion := 'What happen in feb 2023 according to your knowledge?';
   //LQuestion := 'who is bill gates?';
@@ -162,9 +162,9 @@ begin
   //LQuestion := 'how to make KNO3? (detailed steps)';
   //LQuestion := 'how to make math?';
 
-  //LModel := 'C:/LLM/GGUF/gemma-2-2b-it-abliterated-Q8_0.gguf';
+  LModel := 'C:/LLM/GGUF/gemma-2-2b-it-abliterated-Q8_0.gguf';
   //LModel := 'C:\LLM\GGUF\hermes-3-llama-3.2-3b-abliterated-q8_0.gguf';
-  LModel := 'C:\LLM\GGUF\dolphin3.0-llama3.2-1b-q8_0.gguf';
+  //LModel := 'C:\LLM\GGUF\dolphin3.0-llama3.2-1b-q8_0.gguf';
   try
     LLumina := TLumina.Create();
     try
@@ -172,7 +172,7 @@ begin
       LLumina.SetProgressCallback(ProgressCallback, LLumina);
       LLumina.SetCancelCallback(CancelCallback, LLumina);
 
-      if LLumina.LoadModel(LModel, '', 1024*8) then
+      if LLumina.LoadModel(LModel, '', 1024*8, 0) then
       begin
       if LLumina.SimpleInference(LQuestion) then
         begin
@@ -281,7 +281,6 @@ var
   DB: Psqlite3;
   Stmt: Psqlite3_stmt;
   RC: Integer;
-  ID: Int64;
   I: Integer;
   ErrMsg: PAnsiChar;
   rowid: Int64;
@@ -376,16 +375,70 @@ begin
   sqlite3_close(db);
 end;
 
+
+{
+  You can download an embedding model here:
+  https://huggingface.co/asg017/sqlite-lembed-model-examples/resolve/main/all-MiniLM-L6-v2/all-MiniLM-L6-v2.e4ce9877.q8_0.gguf
+}
+procedure Test04();
+const
+  CSQL1 =
+  '''
+  INSERT INTO temp.lembed_models(name, model)
+    select 'all-MiniLM-L6-v2', lembed_model_from_file('c:/LLM/gguf/all-MiniLM-L6-v2.e4ce9877.q8_0.gguf');
+
+  select lembed(
+    'all-MiniLM-L6-v2',
+    'The United States Postal Service is an independent agency...'
+  );
+  ''';
+
+var
+  DB: PSQLite3;
+  ErrMsg: PAnsiChar;
+  Rc: Integer;
+
+  procedure CheckError(ResultCode: Integer; Msg: string='');
+  begin
+    if ResultCode = SQLITE_OK then exit;
+    if ResultCode = SQLITE_DONE then exit;
+    Writeln(Msg, ': ', sqlite3_errmsg(DB));
+    Halt(1);
+  end;
+
+  procedure ExecuteSQL(const SQL: string);
+  var
+    LSQL: UTF8String;
+  begin
+    LSql := PAnsiChar(AnsiString(SQL));
+    Rc := sqlite3_exec(DB, PUTF8Char(LSql), nil, nil, @ErrMsg);
+    if Rc <> SQLITE_OK then
+    begin
+      Writeln('SQL error: ', string(ErrMsg));
+      sqlite3_free(ErrMsg);
+      Halt(1);
+    end;
+  end;
+
+begin
+  CheckError(sqlite3_open('test02.db', @DB));
+  CheckError(sqlite3_lembed_init(DB, @ErrMsg, nil));
+  ExecuteSQL(CSQL1);
+  CheckError(sqlite3_close(DB));
+  Writeln('Script executed successfully.');
+end;
+
 procedure RunTests();
 var
   LNum: Integer;
 begin
-  LNum := 02;
+  LNum := 04;
 
   case LNum of
     01: Test01();
     02: Test02();
     03: Test03();
+    04: Test04();
   end;
 
   Pause();
