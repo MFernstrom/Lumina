@@ -200,21 +200,196 @@ begin
 end;
 
 procedure Test02();
+
+var
+  DB: PSQLite3;
+  Stmt: Psqlite3_stmt;
+  SQL: PAnsiChar;
+  Res: Integer;
+
+procedure CheckError(Res: Integer; DB: Psqlite3);
 begin
+  if Res = SQLITE_OK then exit;
+  if Res = SQLITE_DONE then Exit;
+  raise Exception.CreateFmt('SQLite error %d: %s', [Res, sqlite3_errmsg(DB)]);
 end;
+
+begin
+  db := nil;
+  stmt := nil;
+
+  try
+    // Open database
+    Res := sqlite3_open('example.db', @DB);
+    CheckError(Res, DB);
+
+    try
+      // Create table
+      SQL := 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT);';
+      Res := sqlite3_exec(DB, SQL, nil, nil, nil);
+      CheckError(Res, DB);
+
+      // Insert data
+      SQL := 'INSERT INTO users (name) VALUES (''John Doe'');';
+      Res := sqlite3_exec(DB, SQL, nil, nil, nil);
+      CheckError(Res, DB);
+
+      // Query data
+      SQL := 'SELECT id, name FROM users;';
+      Res := sqlite3_prepare_v2(DB, SQL, -1, @Stmt, nil);
+      CheckError(Res, DB);
+
+      while sqlite3_step(Stmt) = SQLITE_ROW do
+      begin
+        WriteLn('ID: ', sqlite3_column_int(Stmt, 0));
+        WriteLn('Name: ', String(AnsiString(PAnsiChar(sqlite3_column_text(Stmt, 1)))));
+      end;
+
+      // Finalize statement
+      sqlite3_finalize(Stmt);
+    finally
+      // Close database
+      sqlite3_close(DB);
+    end;
+
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
 
 procedure Test03();
+type
+  TVector4 = array[0..3] of Single;
+  TItem = record
+    id: sqlite3_int64;
+    vector: TVector4;
+  end;
+
+const
+  items: array[0..4] of TItem = (
+    (id: 1; vector: (0.1, 0.1, 0.1, 0.1)),
+    (id: 2; vector: (0.2, 0.2, 0.2, 0.2)),
+    (id: 3; vector: (0.3, 0.3, 0.3, 0.3)),
+    (id: 4; vector: (0.4, 0.4, 0.4, 0.4)),
+    (id: 5; vector: (0.5, 0.5, 0.5, 0.5))
+  );
+
+  query: TVector4 = (0.3, 0.3, 0.3, 0.3);
+var
+  DB: Psqlite3;
+  Stmt: Psqlite3_stmt;
+  RC: Integer;
+  ID: Int64;
+  I: Integer;
+  ErrMsg: PAnsiChar;
+  rowid: Int64;
+  distance: Double;
+
+procedure AssertSQLite(rc: Integer);
 begin
+  Assert(rc = SQLITE_OK);
 end;
 
-procedure Test04();
 begin
+  // Open in-memory database
+  rc := sqlite3_open(':memory:', @db);
+  AssertSQLite(rc);
+
+  // Initialize SQLite vector extension
+  rc := sqlite3_vec_init(db, @ErrMsg, nil);
+  AssertSQLite(rc);
+
+  // Check versions
+  rc := sqlite3_prepare_v2(db, 'SELECT sqlite_version(), vec_version()', -1, @stmt, nil);
+  AssertSQLite(rc);
+
+  rc := sqlite3_step(stmt);
+  if rc = SQLITE_ROW then
+    WriteLn(Format('sqlite_version=%s, vec_version=%s', [
+      PAnsiChar(sqlite3_column_text(stmt, 0)),
+      PAnsiChar(sqlite3_column_text(stmt, 1))
+    ]));
+  sqlite3_finalize(stmt);
+
+    // Create virtual table
+    rc := sqlite3_prepare_v2(db,
+      'CREATE VIRTUAL TABLE vec_items USING vec0(embedding float[4])',
+      -1, @stmt, nil);
+    AssertSQLite(rc);
+    rc := sqlite3_step(stmt);
+    Assert(rc = SQLITE_DONE);
+    sqlite3_finalize(stmt);
+
+    // Begin transaction
+    rc := sqlite3_exec(db, 'BEGIN', nil, nil, @errMsg);
+    AssertSQLite(rc);
+
+    // Insert items
+    rc := sqlite3_prepare_v2(db,
+      'INSERT INTO vec_items(rowid, embedding) VALUES (?, ?)',
+      -1, @stmt, nil);
+    AssertSQLite(rc);
+
+    for i := Low(items) to High(items) do
+    begin
+      sqlite3_bind_int64(stmt, 1, items[i].id);
+      sqlite3_bind_blob(stmt, 2, @items[i].vector, SizeOf(items[i].vector), SQLITE_STATIC);
+      rc := sqlite3_step(stmt);
+      Assert(rc = SQLITE_DONE);
+      sqlite3_reset(stmt);
+    end;
+    sqlite3_finalize(stmt);
+
+    // Commit transaction
+    rc := sqlite3_exec(db, 'COMMIT', nil, nil, @errMsg);
+    AssertSQLite(rc);
+
+    // Query nearest neighbors
+    rc := sqlite3_prepare_v2(db,
+      'SELECT ' +
+      '  rowid, ' +
+      '  distance ' +
+      'FROM vec_items ' +
+      'WHERE embedding MATCH ?1 ' +
+      'ORDER BY distance ' +
+      'LIMIT 3',
+      -1, @stmt, nil);
+    AssertSQLite(rc);
+
+    sqlite3_bind_blob(stmt, 1, @query[0], SizeOf(query), SQLITE_STATIC);
+
+    while True do
+    begin
+      rc := sqlite3_step(stmt);
+      if rc = SQLITE_DONE then
+        Break;
+      Assert(rc = SQLITE_ROW);
+
+      rowid := sqlite3_column_int64(stmt, 0);
+      distance := sqlite3_column_double(stmt, 1);
+      WriteLn(Format('rowid=%d distance=%f', [rowid, distance]));
+    end;
+    sqlite3_finalize(stmt);
+
+  sqlite3_close(db);
 end;
 
 procedure RunTests();
+var
+  LNum: Integer;
 begin
-  Test01();
+  LNum := 02;
+
+  case LNum of
+    01: Test01();
+    02: Test02();
+    03: Test03();
+  end;
+
   Pause();
 end;
+
 
 end.

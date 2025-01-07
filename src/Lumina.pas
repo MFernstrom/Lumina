@@ -691,6 +691,15 @@ const
   FTS5_TOKENIZE_DOCUMENT = $0004;
   FTS5_TOKENIZE_AUX = $0008;
   FTS5_TOKEN_COLOCATED = $0001;
+  VERSION_MAJOR = 0;
+  VERSION_MINOR = 1;
+  VERSION_PATCH = 6;
+  SQLITE_VEC_VERSION = '0.1.6';
+  SQLITE_VEC_DATE = '2025/01/06';
+  SQLITE_VEC_SOURCE = '2abca78';
+  SQLITE_VEC_VERSION_MAJOR = 0;
+  SQLITE_VEC_VERSION_MINOR = 6;
+  SQLITE_VEC_VERSION_PATCH = 1;
 
 type
   ggml_status = Integer;
@@ -2238,6 +2247,10 @@ type
 type
   sqlite3_bind_blob_ = procedure(p1: Pointer); cdecl;
 
+const
+  SQLITE_STATIC: sqlite3_destructor_type = sqlite3_destructor_type(0);
+  SQLITE_TRANSIENT: sqlite3_destructor_type = sqlite3_destructor_type(-1);
+
 type
   sqlite3_bind_blob64_ = procedure(p1: Pointer); cdecl;
 
@@ -3158,6 +3171,12 @@ var
   sqlite3_column_count: function(pStmt: Psqlite3_stmt): Integer; cdecl;
   sqlite3_column_name: function(p1: Psqlite3_stmt; N: Integer): PUTF8Char; cdecl;
   sqlite3_column_name16: function(p1: Psqlite3_stmt; N: Integer): Pointer; cdecl;
+  sqlite3_column_database_name: function(p1: Psqlite3_stmt; p2: Integer): PUTF8Char; cdecl;
+  sqlite3_column_database_name16: function(p1: Psqlite3_stmt; p2: Integer): Pointer; cdecl;
+  sqlite3_column_table_name: function(p1: Psqlite3_stmt; p2: Integer): PUTF8Char; cdecl;
+  sqlite3_column_table_name16: function(p1: Psqlite3_stmt; p2: Integer): Pointer; cdecl;
+  sqlite3_column_origin_name: function(p1: Psqlite3_stmt; p2: Integer): PUTF8Char; cdecl;
+  sqlite3_column_origin_name16: function(p1: Psqlite3_stmt; p2: Integer): Pointer; cdecl;
   sqlite3_column_decltype: function(p1: Psqlite3_stmt; p2: Integer): PUTF8Char; cdecl;
   sqlite3_column_decltype16: function(p1: Psqlite3_stmt; p2: Integer): Pointer; cdecl;
   sqlite3_step: function(p1: Psqlite3_stmt): Integer; cdecl;
@@ -3330,6 +3349,7 @@ var
   sqlite3_deserialize: function(db: Psqlite3; const zSchema: PUTF8Char; pData: PByte; szDb: sqlite3_int64; szBuf: sqlite3_int64; mFlags: Cardinal): Integer; cdecl;
   redirect_cerr_to_callback: procedure(callback: cerr_callback; user_data: Pointer); cdecl;
   restore_cerr: procedure(); cdecl;
+  sqlite3_vec_init: function(db: Psqlite3; pzErrMsg: PPUTF8Char; const pApi: Psqlite3_api_routines): Integer; cdecl;
 
 procedure GetExports(const aDLLHandle: THandle);
 
@@ -4509,6 +4529,8 @@ begin
   sqlite3_column_bytes := GetProcAddress(aDLLHandle, 'sqlite3_column_bytes');
   sqlite3_column_bytes16 := GetProcAddress(aDLLHandle, 'sqlite3_column_bytes16');
   sqlite3_column_count := GetProcAddress(aDLLHandle, 'sqlite3_column_count');
+  sqlite3_column_database_name := GetProcAddress(aDLLHandle, 'sqlite3_column_database_name');
+  sqlite3_column_database_name16 := GetProcAddress(aDLLHandle, 'sqlite3_column_database_name16');
   sqlite3_column_decltype := GetProcAddress(aDLLHandle, 'sqlite3_column_decltype');
   sqlite3_column_decltype16 := GetProcAddress(aDLLHandle, 'sqlite3_column_decltype16');
   sqlite3_column_double := GetProcAddress(aDLLHandle, 'sqlite3_column_double');
@@ -4516,6 +4538,10 @@ begin
   sqlite3_column_int64 := GetProcAddress(aDLLHandle, 'sqlite3_column_int64');
   sqlite3_column_name := GetProcAddress(aDLLHandle, 'sqlite3_column_name');
   sqlite3_column_name16 := GetProcAddress(aDLLHandle, 'sqlite3_column_name16');
+  sqlite3_column_origin_name := GetProcAddress(aDLLHandle, 'sqlite3_column_origin_name');
+  sqlite3_column_origin_name16 := GetProcAddress(aDLLHandle, 'sqlite3_column_origin_name16');
+  sqlite3_column_table_name := GetProcAddress(aDLLHandle, 'sqlite3_column_table_name');
+  sqlite3_column_table_name16 := GetProcAddress(aDLLHandle, 'sqlite3_column_table_name16');
   sqlite3_column_text := GetProcAddress(aDLLHandle, 'sqlite3_column_text');
   sqlite3_column_text16 := GetProcAddress(aDLLHandle, 'sqlite3_column_text16');
   sqlite3_column_type := GetProcAddress(aDLLHandle, 'sqlite3_column_type');
@@ -4713,6 +4739,7 @@ begin
   sqlite3_value_text16be := GetProcAddress(aDLLHandle, 'sqlite3_value_text16be');
   sqlite3_value_text16le := GetProcAddress(aDLLHandle, 'sqlite3_value_text16le');
   sqlite3_value_type := GetProcAddress(aDLLHandle, 'sqlite3_value_type');
+  sqlite3_vec_init := GetProcAddress(aDLLHandle, 'sqlite3_vec_init');
   sqlite3_vfs_find := GetProcAddress(aDLLHandle, 'sqlite3_vfs_find');
   sqlite3_vfs_register := GetProcAddress(aDLLHandle, 'sqlite3_vfs_register');
   sqlite3_vfs_unregister := GetProcAddress(aDLLHandle, 'sqlite3_vfs_unregister');
