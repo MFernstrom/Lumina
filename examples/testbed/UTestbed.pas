@@ -172,7 +172,7 @@ begin
       LLumina.SetProgressCallback(ProgressCallback, LLumina);
       LLumina.SetCancelCallback(CancelCallback, LLumina);
 
-      if LLumina.LoadModel(LModel, '', 1024*8, 0) then
+      if LLumina.LoadModel(LModel, '', 1024*8) then
       begin
       if LLumina.SimpleInference(LQuestion) then
         begin
@@ -432,7 +432,7 @@ procedure RunTests();
 var
   LNum: Integer;
 begin
-  LNum := 04;
+  LNum := 01;
 
   case LNum of
     01: Test01();

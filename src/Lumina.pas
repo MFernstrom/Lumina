@@ -1,4 +1,4 @@
-{===============================================================================
+﻿{===============================================================================
   _                  _
  | |    _  _  _ __  (_) _ _   __ _ ™
  | |__ | || || '  \ | || ' \ / _` |
@@ -5349,6 +5349,8 @@ begin
   FGPULayers  := AGPULayers;
   FMaxThreads := AMaxThreads;
 
+  llama_backend_init();
+
   redirect_cerr_to_callback(TLumina_CerrCallback, nil);
 
   llama_log_set(TLumina_LogCallback, Self);
@@ -5380,6 +5382,7 @@ begin
     llama_free_model(FModel);
     FModel := nil;
     restore_cerr();
+    llama_backend_free();
   end;
 end;
 
