@@ -160,7 +160,6 @@ begin
   //LQuestion := 'what is KNO3?';
   //LQuestion := 'hello in: spanish, japanese, chinese';
   //LQuestion := 'how to make KNO3? (detailed steps)';
-  //LQuestion := 'how to make math?';
 
   LModel := 'C:/LLM/GGUF/gemma-2-2b-it-abliterated-Q8_0.gguf';
   //LModel := 'C:\LLM\GGUF\hermes-3-llama-3.2-3b-abliterated-q8_0.gguf';
@@ -219,8 +218,11 @@ begin
   stmt := nil;
 
   try
+    // remove existing database
+    DeleteFile('test02.db');
+
     // Open database
-    Res := sqlite3_open('example.db', @DB);
+    Res := sqlite3_open('test02.db', @DB);
     CheckError(Res, DB);
 
     try
@@ -257,7 +259,6 @@ begin
       Writeln(E.ClassName, ': ', E.Message);
   end;
 end;
-
 
 procedure Test03();
 type
@@ -379,24 +380,78 @@ end;
 {
   You can download an embedding model here:
   https://huggingface.co/asg017/sqlite-lembed-model-examples/resolve/main/all-MiniLM-L6-v2/all-MiniLM-L6-v2.e4ce9877.q8_0.gguf
+  Place in a desired location, for example "C:/LLM/GGUF/all-MiniLM-L6-v2.e4ce9877.q8_0.gguf"
 }
 procedure Test04();
 const
+  {
+    CSQL1
+
+    Copied from lembed readme - https://github.com/asg017/sqlite-lembed
+    Sets up lembed to use all-MiniLM-L6-v2.gguf
+    Creates the articles table
+    Inserts random NPR headlines
+    Builds a vector table with embeddings of the headlines
+    Inserts the data into the vector table
+  }
   CSQL1 =
   '''
   INSERT INTO temp.lembed_models(name, model)
-    select 'all-MiniLM-L6-v2', lembed_model_from_file('c:/LLM/gguf/all-MiniLM-L6-v2.e4ce9877.q8_0.gguf');
+    select 'all-MiniLM-L6-v2', lembed_model_from_file('C:/LLM/GGUF/all-MiniLM-L6-v2.e4ce9877.q8_0.gguf');
 
-  select lembed(
-    'all-MiniLM-L6-v2',
-    'The United States Postal Service is an independent agency...'
+  create table articles(
+    headline text
   );
+
+  -- Random NPR headlines from 2024-06-04
+  insert into articles VALUES
+    ('Shohei Ohtani''s ex-interpreter pleads guilty to charges related to gambling and theft'),
+    ('The jury has been selected in Hunter Biden''s gun trial'),
+    ('Larry Allen, a Super Bowl champion and famed Dallas Cowboy, has died at age 52'),
+    ('After saying Charlotte, a lone stingray, was pregnant, aquarium now says she''s sick'),
+    ('An Epoch Times executive is facing money laundering charge');
+
+  -- Build a vector table with embeddings of article headlines
+  create virtual table vec_articles using vec0(
+    headline_embeddings float[384]
+  );
+
+  insert into vec_articles(rowid, headline_embeddings)
+    select rowid, lembed('all-MiniLM-L6-v2', headline)
+    from articles;
+  ''';
+
+  {
+    CSQL2
+
+    Semantic search example from lembed readme.
+    Searches on "firearm courtroom" and returns results based on the join.
+    Limits to three returned results.
+  }
+  const CSQL2 =
+  '''
+  with matches as (
+      select
+        rowid,
+        distance
+      from vec_articles
+      where headline_embeddings match lembed('all-MiniLM-L6-v2', 'firearm courtroom')
+      order by distance
+      limit 3
+    )
+    select
+      headline,
+      distance
+    from matches
+    left join articles on articles.rowid = matches.rowid;
   ''';
 
 var
   DB: PSQLite3;
   ErrMsg: PAnsiChar;
   Rc: Integer;
+  RowNumber: Integer;
+  stmt: Psqlite3_stmt;
 
   procedure CheckError(ResultCode: Integer; Msg: string='');
   begin
@@ -421,18 +476,51 @@ var
   end;
 
 begin
-  CheckError(sqlite3_open('test02.db', @DB));
-  CheckError(sqlite3_lembed_init(DB, @ErrMsg, nil));
-  ExecuteSQL(CSQL1);
-  CheckError(sqlite3_close(DB));
-  Writeln('Script executed successfully.');
+  try
+    // Remove old file to keep test idempotent
+    DeleteFile('test04.db');
+
+    // Open the database
+    CheckError(sqlite3_open('test04.db', @DB));
+
+    // Initialize sqlite vec and lembed addons
+    CheckError(sqlite3_vec_init(db, @ErrMsg, nil));
+    CheckError(sqlite3_lembed_init(DB, @ErrMsg, nil));
+
+    // Initial SQL, see variable comment for details of what it does
+    ExecuteSQL(CSQL1);
+
+    // SQL to perform vector search, see variable comment for the details
+    CheckError(sqlite3_prepare_v2(DB, CSQL2, -1, @Stmt, nil));
+
+    // Loop the returned rows
+    RowNumber := 0;
+    while sqlite3_step(Stmt) = SQLITE_ROW do begin
+      Write(RowNumber);
+      Write(': ');
+      Write(String(PAnsiChar(SQLite3_Column_Name(Stmt, 0)))); // Column name
+      Write(': ');
+      WriteLn(String(PAnsiChar(sqlite3_column_text(Stmt, 0)))); // Column data
+      Inc(RowNumber);
+    end;
+
+    // Deletes the prepared statement and closes the db, part of cleanup.
+    sqlite3_finalize(stmt);
+    sqlite3_close(DB);
+
+    Writeln('Script executed successfully.');
+
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
 end;
 
 procedure RunTests();
 var
   LNum: Integer;
 begin
-  LNum := 01;
+  LNum := 04;
 
   case LNum of
     01: Test01();
