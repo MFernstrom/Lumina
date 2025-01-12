@@ -3747,7 +3747,7 @@ type
     ///  <remarks>
     ///    Supports both CPU and GPU acceleration, with configurable threading for optimal performance.
     ///  </remarks>
-    function  LoadModel(const AModelFilename: string; const ATempate: string=''; const AMaxContext: UInt32=512; const AGPULayers: Int32=-1; const AMaxThreads: Int32=4): Boolean;
+    function  LoadModel(const AModelFilename: string; const ATemplate: string=''; const AMaxContext: UInt32=512; const AGPULayers: Int32=-1; const AMaxThreads: Int32=4): Boolean;
 
     ///  <summary>
     ///    Unloads the currently loaded model, freeing associated resources.
@@ -5332,7 +5332,7 @@ begin
   FInfoCallback.UserData := AUserData;
 end;
 
-function  TLumina.LoadModel(const AModelFilename: string; const ATempate: string=''; const AMaxContext: UInt32=512; const AGPULayers: Int32=-1; const AMaxThreads: Int32=4): Boolean;
+function  TLumina.LoadModel(const AModelFilename: string; const ATemplate: string=''; const AMaxContext: UInt32=512; const AGPULayers: Int32=-1; const AMaxThreads: Int32=4): Boolean;
 begin
   Result := False;
 
@@ -5344,7 +5344,7 @@ begin
 
   FModelFilename  := AModelFilename;
   FModelProgress  := 0;
-  FModelTemplate  := ATempate;
+  FModelTemplate  := ATemplate;
   FModelMaxContex := AMaxContext;
   FGPULayers  := AGPULayers;
   FMaxThreads := AMaxThreads;
@@ -5655,7 +5655,7 @@ end;
 
 var
   LError: string;
-  
+
 initialization
 begin
   ReportMemoryLeaksOnShutdown := True;
