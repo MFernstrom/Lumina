@@ -520,7 +520,7 @@ procedure RunTests();
 var
   LNum: Integer;
 begin
-  LNum := 04;
+  LNum := 01;
 
   case LNum of
     01: Test01();

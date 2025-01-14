@@ -1,4 +1,4 @@
-﻿{===============================================================================
+{===============================================================================
   _                  _
  | |    _  _  _ __  (_) _ _   __ _ ™
  | |__ | || || '  \ | || ' \ / _` |
@@ -145,12 +145,6 @@
 ===============================================================================}
 
 unit Lumina;
-
-{$IF CompilerVersion >= 36.0}
-  // Code specific to Delphi Athens (12.2) and above
-{$ELSE}
-  {$MESSAGE ERROR 'This code requires  Delphi Athens (12.2) or later'}
-{$IFEND}
 
 {$IFNDEF WIN64}
   // Generates a compile-time error if the target platform is not Win64
@@ -5349,8 +5343,6 @@ begin
   FGPULayers  := AGPULayers;
   FMaxThreads := AMaxThreads;
 
-  llama_backend_init();
-
   redirect_cerr_to_callback(TLumina_CerrCallback, nil);
 
   llama_log_set(TLumina_LogCallback, Self);
@@ -5382,7 +5374,6 @@ begin
     llama_free_model(FModel);
     FModel := nil;
     restore_cerr();
-    llama_backend_free();
   end;
 end;
 
@@ -5655,7 +5646,7 @@ end;
 
 var
   LError: string;
-
+  
 initialization
 begin
   ReportMemoryLeaksOnShutdown := True;
