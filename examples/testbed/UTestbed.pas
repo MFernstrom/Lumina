@@ -151,6 +151,7 @@ var
   LPerf: TLumina.PerformanceResult;
   LQuestion: string;
   LModel: string;
+  LAddAssistant: Boolean;
 begin
   //LQuestion := function_call2;
   LQuestion := 'what is AI?';
@@ -162,8 +163,14 @@ begin
   //LQuestion := 'how to make KNO3? (detailed steps)';
 
   LModel := 'C:/LLM/GGUF/gemma-2-2b-it-abliterated-Q8_0.gguf';
+  LAddAssistant := False;
+
   //LModel := 'C:\LLM\GGUF\hermes-3-llama-3.2-3b-abliterated-q8_0.gguf';
+  //LAddAssistant := True;
+
   //LModel := 'C:\LLM\GGUF\dolphin3.0-llama3.2-1b-q8_0.gguf';
+  //LAddAssistant := True;
+
   try
     LLumina := TLumina.Create();
     try
@@ -171,7 +178,7 @@ begin
       LLumina.SetProgressCallback(ProgressCallback, LLumina);
       LLumina.SetCancelCallback(CancelCallback, LLumina);
 
-      if LLumina.LoadModel(LModel, '', 1024*8) then
+      if LLumina.LoadModel(LModel, '', 1024*8, -1, 4, LAddAssistant) then
       begin
       if LLumina.SimpleInference(LQuestion) then
         begin

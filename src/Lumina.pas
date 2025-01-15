@@ -195,9 +195,6 @@ const
   GGML_ROPE_TYPE_NEOX = 2;
   GGML_ROPE_TYPE_MROPE = 8;
   GGML_ROPE_TYPE_VISION = 24;
-  GGUF_MAGIC = 'GGUF';
-  GGUF_VERSION = 3;
-  GGUF_DEFAULT_ALIGNMENT = 32;
   GGML_KQ_MASK_PAD = 32;
   GGML_N_TASKS_MAX = (-1);
   LLAMA_DEFAULT_SEED = $FFFFFFFF;
@@ -209,9 +206,9 @@ const
   LLAMA_SESSION_VERSION = 9;
   LLAMA_STATE_SEQ_MAGIC = LLAMA_FILE_MAGIC_GGSQ;
   LLAMA_STATE_SEQ_VERSION = 2;
-  SQLITE_VERSION = '3.47.2';
-  SQLITE_VERSION_NUMBER = 3047002;
-  SQLITE_SOURCE_ID = '2024-12-07 20:39:59 2aabe05e2e8cae4847a802ee2daddc1d7413d8fc560254d93ee3e72c14685b6c';
+  SQLITE_VERSION = '3.48.0';
+  SQLITE_VERSION_NUMBER = 3048000;
+  SQLITE_SOURCE_ID = '2025-01-14 11:05:00 d2fe6b05f38d9d7cd78c5d252e99ac59f1aea071d669830c1ffe4e8966e84010';
   SQLITE_OK = 0;
   SQLITE_ERROR = 1;
   SQLITE_INTERNAL = 2;
@@ -408,6 +405,7 @@ const
   SQLITE_FCNTL_EXTERNAL_READER = 40;
   SQLITE_FCNTL_CKSM_FILE = 41;
   SQLITE_FCNTL_RESET_CACHE = 42;
+  SQLITE_FCNTL_NULL_IO = 43;
   SQLITE_GET_LOCKPROXYFILE = SQLITE_FCNTL_GET_LOCKPROXYFILE;
   SQLITE_SET_LOCKPROXYFILE = SQLITE_FCNTL_SET_LOCKPROXYFILE;
   SQLITE_LAST_ERRNO = SQLITE_FCNTL_LAST_ERRNO;
@@ -524,6 +522,7 @@ const
   SQLITE_PREPARE_PERSISTENT = $01;
   SQLITE_PREPARE_NORMALIZE = $02;
   SQLITE_PREPARE_NO_VTAB = $04;
+  SQLITE_PREPARE_DONT_LOG = $10;
   SQLITE_INTEGER = 1;
   SQLITE_FLOAT = 2;
   SQLITE_BLOB = 4;
@@ -755,15 +754,6 @@ const
   GGML_PREC_F32 = 1;
 
 type
-  ggml_backend_type = Integer;
-  Pggml_backend_type = ^ggml_backend_type;
-
-const
-  GGML_BACKEND_TYPE_CPU = 0;
-  GGML_BACKEND_TYPE_GPU = 10;
-  GGML_BACKEND_TYPE_GPU_SPLIT = 20;
-
-type
   ggml_ftype = Integer;
   Pggml_ftype = ^ggml_ftype;
 
@@ -868,19 +858,20 @@ const
   GGML_OP_GET_REL_POS = 67;
   GGML_OP_ADD_REL_POS = 68;
   GGML_OP_RWKV_WKV6 = 69;
-  GGML_OP_UNARY = 70;
-  GGML_OP_MAP_UNARY = 71;
-  GGML_OP_MAP_BINARY = 72;
-  GGML_OP_MAP_CUSTOM1_F32 = 73;
-  GGML_OP_MAP_CUSTOM2_F32 = 74;
-  GGML_OP_MAP_CUSTOM3_F32 = 75;
-  GGML_OP_MAP_CUSTOM1 = 76;
-  GGML_OP_MAP_CUSTOM2 = 77;
-  GGML_OP_MAP_CUSTOM3 = 78;
-  GGML_OP_CROSS_ENTROPY_LOSS = 79;
-  GGML_OP_CROSS_ENTROPY_LOSS_BACK = 80;
-  GGML_OP_OPT_STEP_ADAMW = 81;
-  GGML_OP_COUNT = 82;
+  GGML_OP_GATED_LINEAR_ATTN = 70;
+  GGML_OP_UNARY = 71;
+  GGML_OP_MAP_UNARY = 72;
+  GGML_OP_MAP_BINARY = 73;
+  GGML_OP_MAP_CUSTOM1_F32 = 74;
+  GGML_OP_MAP_CUSTOM2_F32 = 75;
+  GGML_OP_MAP_CUSTOM3_F32 = 76;
+  GGML_OP_MAP_CUSTOM1 = 77;
+  GGML_OP_MAP_CUSTOM2 = 78;
+  GGML_OP_MAP_CUSTOM3 = 79;
+  GGML_OP_CROSS_ENTROPY_LOSS = 80;
+  GGML_OP_CROSS_ENTROPY_LOSS_BACK = 81;
+  GGML_OP_OPT_STEP_ADAMW = 82;
+  GGML_OP_COUNT = 83;
 
 type
   ggml_unary_op = Integer;
@@ -950,26 +941,6 @@ type
 const
   GGML_SORT_ORDER_ASC = 0;
   GGML_SORT_ORDER_DESC = 1;
-
-type
-  gguf_type = Integer;
-  Pgguf_type = ^gguf_type;
-
-const
-  GGUF_TYPE_UINT8 = 0;
-  GGUF_TYPE_INT8 = 1;
-  GGUF_TYPE_UINT16 = 2;
-  GGUF_TYPE_INT16 = 3;
-  GGUF_TYPE_UINT32 = 4;
-  GGUF_TYPE_INT32 = 5;
-  GGUF_TYPE_FLOAT32 = 6;
-  GGUF_TYPE_BOOL = 7;
-  GGUF_TYPE_STRING = 8;
-  GGUF_TYPE_ARRAY = 9;
-  GGUF_TYPE_UINT64 = 10;
-  GGUF_TYPE_INT64 = 11;
-  GGUF_TYPE_FLOAT64 = 12;
-  GGUF_TYPE_COUNT = 13;
 
 type
   ggml_sched_priority = Integer;
@@ -1208,8 +1179,6 @@ type
   PPggml_cgraph = ^Pggml_cgraph;
   Pggml_backend_buffer = Pointer;
   PPggml_backend_buffer = ^Pggml_backend_buffer;
-  Pgguf_context = Pointer;
-  PPgguf_context = ^Pgguf_context;
   Pggml_threadpool = Pointer;
   PPggml_threadpool = ^Pggml_threadpool;
   Pggml_backend_buffer_type = Pointer;
@@ -1226,17 +1195,18 @@ type
   PPggml_backend_device = ^Pggml_backend_device;
   Pggml_backend_sched = Pointer;
   PPggml_backend_sched = ^Pggml_backend_sched;
+  Pllama_vocab = Pointer;
+  PPllama_vocab = ^Pllama_vocab;
   Pllama_model = Pointer;
   PPllama_model = ^Pllama_model;
   Pllama_context = Pointer;
   PPllama_context = ^Pllama_context;
-  Pllama_lora_adapter = Pointer;
-  PPllama_lora_adapter = ^Pllama_lora_adapter;
+  Pllama_adapter_lora = Pointer;
+  PPllama_adapter_lora = ^Pllama_adapter_lora;
   Pggml_bf16_t = ^ggml_bf16_t;
   Pggml_init_params = ^ggml_init_params;
   Pggml_tensor = ^ggml_tensor;
   PPggml_tensor = ^Pggml_tensor;
-  Pgguf_init_params = ^gguf_init_params;
   Pggml_type_traits = ^ggml_type_traits;
   Pggml_threadpool_params = ^ggml_threadpool_params;
   Pggml_tallocr = ^ggml_tallocr;
@@ -1306,7 +1276,6 @@ type
 
   ggml_tensor = record
     &type: ggml_type;
-    backend: ggml_backend_type;
     buffer: Pggml_backend_buffer;
     ne: array [0..3] of Int64;
     nb: array [0..3] of NativeUInt;
@@ -1343,11 +1312,6 @@ type
   ggml_custom3_op_t = procedure(dst: Pggml_tensor; const a: Pggml_tensor; const b: Pggml_tensor; const c: Pggml_tensor; ith: Integer; nth: Integer; userdata: Pointer); cdecl;
 
   ggml_log_callback = procedure(level: ggml_log_level; const text: PUTF8Char; user_data: Pointer); cdecl;
-
-  gguf_init_params = record
-    no_alloc: Boolean;
-    ctx: PPggml_context;
-  end;
 
   ggml_to_float_t = procedure(const x: Pointer; y: PSingle; k: Int64); cdecl;
 
@@ -2628,6 +2592,7 @@ var
   ggml_add_rel_pos: function(ctx: Pggml_context; a: Pggml_tensor; pw: Pggml_tensor; ph: Pggml_tensor): Pggml_tensor; cdecl;
   ggml_add_rel_pos_inplace: function(ctx: Pggml_context; a: Pggml_tensor; pw: Pggml_tensor; ph: Pggml_tensor): Pggml_tensor; cdecl;
   ggml_rwkv_wkv6: function(ctx: Pggml_context; k: Pggml_tensor; v: Pggml_tensor; r: Pggml_tensor; tf: Pggml_tensor; td: Pggml_tensor; state: Pggml_tensor): Pggml_tensor; cdecl;
+  ggml_gated_linear_attn: function(ctx: Pggml_context; k: Pggml_tensor; v: Pggml_tensor; q: Pggml_tensor; g: Pggml_tensor; state: Pggml_tensor; scale: Single): Pggml_tensor; cdecl;
   ggml_map_unary_f32: function(ctx: Pggml_context; a: Pggml_tensor; fun: ggml_unary_op_f32_t): Pggml_tensor; cdecl;
   ggml_map_unary_inplace_f32: function(ctx: Pggml_context; a: Pggml_tensor; fun: ggml_unary_op_f32_t): Pggml_tensor; cdecl;
   ggml_map_binary_f32: function(ctx: Pggml_context; a: Pggml_tensor; b: Pggml_tensor; fun: ggml_binary_op_f32_t): Pggml_tensor; cdecl;
@@ -2673,62 +2638,6 @@ var
   ggml_quantize_free: procedure(); cdecl;
   ggml_quantize_requires_imatrix: function(&type: ggml_type): Boolean; cdecl;
   ggml_quantize_chunk: function(&type: ggml_type; const src: PSingle; dst: Pointer; start: Int64; nrows: Int64; n_per_row: Int64; const imatrix: PSingle): NativeUInt; cdecl;
-  gguf_init_empty: function(): Pgguf_context; cdecl;
-  gguf_init_from_file: function(const fname: PUTF8Char; params: gguf_init_params): Pgguf_context; cdecl;
-  gguf_free: procedure(ctx: Pgguf_context); cdecl;
-  gguf_type_name: function(&type: gguf_type): PUTF8Char; cdecl;
-  gguf_get_version: function(const ctx: Pgguf_context): Integer; cdecl;
-  gguf_get_alignment: function(const ctx: Pgguf_context): NativeUInt; cdecl;
-  gguf_get_data_offset: function(const ctx: Pgguf_context): NativeUInt; cdecl;
-  gguf_get_data: function(const ctx: Pgguf_context): Pointer; cdecl;
-  gguf_get_n_kv: function(const ctx: Pgguf_context): Integer; cdecl;
-  gguf_find_key: function(const ctx: Pgguf_context; const key: PUTF8Char): Integer; cdecl;
-  gguf_get_key: function(const ctx: Pgguf_context; key_id: Integer): PUTF8Char; cdecl;
-  gguf_get_kv_type: function(const ctx: Pgguf_context; key_id: Integer): gguf_type; cdecl;
-  gguf_get_arr_type: function(const ctx: Pgguf_context; key_id: Integer): gguf_type; cdecl;
-  gguf_get_val_u8: function(const ctx: Pgguf_context; key_id: Integer): UInt8; cdecl;
-  gguf_get_val_i8: function(const ctx: Pgguf_context; key_id: Integer): Int8; cdecl;
-  gguf_get_val_u16: function(const ctx: Pgguf_context; key_id: Integer): UInt16; cdecl;
-  gguf_get_val_i16: function(const ctx: Pgguf_context; key_id: Integer): Int16; cdecl;
-  gguf_get_val_u32: function(const ctx: Pgguf_context; key_id: Integer): UInt32; cdecl;
-  gguf_get_val_i32: function(const ctx: Pgguf_context; key_id: Integer): Int32; cdecl;
-  gguf_get_val_f32: function(const ctx: Pgguf_context; key_id: Integer): Single; cdecl;
-  gguf_get_val_u64: function(const ctx: Pgguf_context; key_id: Integer): UInt64; cdecl;
-  gguf_get_val_i64: function(const ctx: Pgguf_context; key_id: Integer): Int64; cdecl;
-  gguf_get_val_f64: function(const ctx: Pgguf_context; key_id: Integer): Double; cdecl;
-  gguf_get_val_bool: function(const ctx: Pgguf_context; key_id: Integer): Boolean; cdecl;
-  gguf_get_val_str: function(const ctx: Pgguf_context; key_id: Integer): PUTF8Char; cdecl;
-  gguf_get_val_data: function(const ctx: Pgguf_context; key_id: Integer): Pointer; cdecl;
-  gguf_get_arr_n: function(const ctx: Pgguf_context; key_id: Integer): Integer; cdecl;
-  gguf_get_arr_data: function(const ctx: Pgguf_context; key_id: Integer): Pointer; cdecl;
-  gguf_get_arr_str: function(const ctx: Pgguf_context; key_id: Integer; i: Integer): PUTF8Char; cdecl;
-  gguf_get_n_tensors: function(const ctx: Pgguf_context): Integer; cdecl;
-  gguf_find_tensor: function(const ctx: Pgguf_context; const name: PUTF8Char): Integer; cdecl;
-  gguf_get_tensor_offset: function(const ctx: Pgguf_context; i: Integer): NativeUInt; cdecl;
-  gguf_get_tensor_name: function(const ctx: Pgguf_context; i: Integer): PUTF8Char; cdecl;
-  gguf_get_tensor_type: function(const ctx: Pgguf_context; i: Integer): ggml_type; cdecl;
-  gguf_remove_key: procedure(ctx: Pgguf_context; const key: PUTF8Char); cdecl;
-  gguf_set_val_u8: procedure(ctx: Pgguf_context; const key: PUTF8Char; val: UInt8); cdecl;
-  gguf_set_val_i8: procedure(ctx: Pgguf_context; const key: PUTF8Char; val: Int8); cdecl;
-  gguf_set_val_u16: procedure(ctx: Pgguf_context; const key: PUTF8Char; val: UInt16); cdecl;
-  gguf_set_val_i16: procedure(ctx: Pgguf_context; const key: PUTF8Char; val: Int16); cdecl;
-  gguf_set_val_u32: procedure(ctx: Pgguf_context; const key: PUTF8Char; val: UInt32); cdecl;
-  gguf_set_val_i32: procedure(ctx: Pgguf_context; const key: PUTF8Char; val: Int32); cdecl;
-  gguf_set_val_f32: procedure(ctx: Pgguf_context; const key: PUTF8Char; val: Single); cdecl;
-  gguf_set_val_u64: procedure(ctx: Pgguf_context; const key: PUTF8Char; val: UInt64); cdecl;
-  gguf_set_val_i64: procedure(ctx: Pgguf_context; const key: PUTF8Char; val: Int64); cdecl;
-  gguf_set_val_f64: procedure(ctx: Pgguf_context; const key: PUTF8Char; val: Double); cdecl;
-  gguf_set_val_bool: procedure(ctx: Pgguf_context; const key: PUTF8Char; val: Boolean); cdecl;
-  gguf_set_val_str: procedure(ctx: Pgguf_context; const key: PUTF8Char; const val: PUTF8Char); cdecl;
-  gguf_set_arr_data: procedure(ctx: Pgguf_context; const key: PUTF8Char; &type: gguf_type; const data: Pointer; n: Integer); cdecl;
-  gguf_set_arr_str: procedure(ctx: Pgguf_context; const key: PUTF8Char; data: PPUTF8Char; n: Integer); cdecl;
-  gguf_set_kv: procedure(ctx: Pgguf_context; src: Pgguf_context); cdecl;
-  gguf_add_tensor: procedure(ctx: Pgguf_context; const tensor: Pggml_tensor); cdecl;
-  gguf_set_tensor_type: procedure(ctx: Pgguf_context; const name: PUTF8Char; &type: ggml_type); cdecl;
-  gguf_set_tensor_data: procedure(ctx: Pgguf_context; const name: PUTF8Char; const data: Pointer; size: NativeUInt); cdecl;
-  gguf_write_to_file: procedure(const ctx: Pgguf_context; const fname: PUTF8Char; only_meta: Boolean); cdecl;
-  gguf_get_meta_size: function(const ctx: Pgguf_context): NativeUInt; cdecl;
-  gguf_get_meta_data: procedure(const ctx: Pgguf_context; data: Pointer); cdecl;
   ggml_get_type_traits: function(&type: ggml_type): Pggml_type_traits; cdecl;
   ggml_threadpool_params_default: function(n_threads: Integer): ggml_threadpool_params; cdecl;
   ggml_threadpool_params_init: procedure(p: Pggml_threadpool_params; n_threads: Integer); cdecl;
@@ -2905,14 +2814,15 @@ var
   llama_sampler_chain_default_params: function(): llama_sampler_chain_params; cdecl;
   llama_model_quantize_default_params: function(): llama_model_quantize_params; cdecl;
   llama_backend_init: procedure(); cdecl;
+  llama_backend_free: procedure(); cdecl;
   llama_numa_init: procedure(numa: ggml_numa_strategy); cdecl;
   llama_attach_threadpool: procedure(ctx: Pllama_context; threadpool: ggml_threadpool_t; threadpool_batch: ggml_threadpool_t); cdecl;
   llama_detach_threadpool: procedure(ctx: Pllama_context); cdecl;
-  llama_backend_free: procedure(); cdecl;
   llama_load_model_from_file: function(const path_model: PUTF8Char; params: llama_model_params): Pllama_model; cdecl;
   llama_model_load_from_file: function(const path_model: PUTF8Char; params: llama_model_params): Pllama_model; cdecl;
   llama_free_model: procedure(model: Pllama_model); cdecl;
   llama_model_free: procedure(model: Pllama_model); cdecl;
+  llama_init_from_model: function(model: Pllama_model; params: llama_context_params): Pllama_context; cdecl;
   llama_new_context_with_model: function(model: Pllama_model; params: llama_context_params): Pllama_context; cdecl;
   llama_free: procedure(ctx: Pllama_context); cdecl;
   llama_time_us: function(): Int64; cdecl;
@@ -2925,34 +2835,41 @@ var
   llama_n_batch: function(const ctx: Pllama_context): UInt32; cdecl;
   llama_n_ubatch: function(const ctx: Pllama_context): UInt32; cdecl;
   llama_n_seq_max: function(const ctx: Pllama_context): UInt32; cdecl;
-  llama_n_vocab: function(const model: Pllama_model): Int32; cdecl;
   llama_n_ctx_train: function(const model: Pllama_model): Int32; cdecl;
   llama_n_embd: function(const model: Pllama_model): Int32; cdecl;
   llama_n_layer: function(const model: Pllama_model): Int32; cdecl;
   llama_n_head: function(const model: Pllama_model): Int32; cdecl;
+  llama_n_vocab: function(const vocab: Pllama_vocab): Int32; cdecl;
   llama_get_model: function(const ctx: Pllama_context): Pllama_model; cdecl;
   llama_pooling_type_rtn: function(const ctx: Pllama_context): llama_pooling_type; cdecl;
-  llama_vocab_type_rtn: function(const model: Pllama_model): llama_vocab_type; cdecl;
-  llama_rope_type_rtn: function(const model: Pllama_model): llama_rope_type; cdecl;
-  llama_rope_freq_scale_train: function(const model: Pllama_model): Single; cdecl;
+  llama_model_get_vocab: function(const model: Pllama_model): Pllama_vocab; cdecl;
+  llama_model_rope_type: function(const model: Pllama_model): llama_rope_type; cdecl;
+  llama_model_n_ctx_train: function(const model: Pllama_model): Int32; cdecl;
+  llama_model_n_embd: function(const model: Pllama_model): Int32; cdecl;
+  llama_model_n_layer: function(const model: Pllama_model): Int32; cdecl;
+  llama_model_n_head: function(const model: Pllama_model): Int32; cdecl;
+  llama_model_rope_freq_scale_train: function(const model: Pllama_model): Single; cdecl;
+  llama_vocab_type_rtn: function(const vocab: Pllama_vocab): llama_vocab_type; cdecl;
+  llama_vocab_n_tokens: function(const vocab: Pllama_vocab): Int32; cdecl;
   llama_model_meta_val_str: function(const model: Pllama_model; const key: PUTF8Char; buf: PUTF8Char; buf_size: NativeUInt): Int32; cdecl;
   llama_model_meta_count: function(const model: Pllama_model): Int32; cdecl;
   llama_model_meta_key_by_index: function(const model: Pllama_model; i: Int32; buf: PUTF8Char; buf_size: NativeUInt): Int32; cdecl;
   llama_model_meta_val_str_by_index: function(const model: Pllama_model; i: Int32; buf: PUTF8Char; buf_size: NativeUInt): Int32; cdecl;
   llama_model_desc: function(const model: Pllama_model; buf: PUTF8Char; buf_size: NativeUInt): Int32; cdecl;
   llama_model_size: function(const model: Pllama_model): UInt64; cdecl;
+  llama_model_chat_template: function(const model: Pllama_model): PUTF8Char; cdecl;
   llama_model_n_params: function(const model: Pllama_model): UInt64; cdecl;
   llama_model_has_encoder: function(const model: Pllama_model): Boolean; cdecl;
   llama_model_has_decoder: function(const model: Pllama_model): Boolean; cdecl;
   llama_model_decoder_start_token: function(const model: Pllama_model): llama_token; cdecl;
   llama_model_is_recurrent: function(const model: Pllama_model): Boolean; cdecl;
   llama_model_quantize: function(const fname_inp: PUTF8Char; const fname_out: PUTF8Char; const params: Pllama_model_quantize_params): UInt32; cdecl;
-  llama_lora_adapter_init: function(model: Pllama_model; const path_lora: PUTF8Char): Pllama_lora_adapter; cdecl;
-  llama_lora_adapter_set: function(ctx: Pllama_context; adapter: Pllama_lora_adapter; scale: Single): Int32; cdecl;
-  llama_lora_adapter_remove: function(ctx: Pllama_context; adapter: Pllama_lora_adapter): Int32; cdecl;
-  llama_lora_adapter_clear: procedure(ctx: Pllama_context); cdecl;
-  llama_lora_adapter_free: procedure(adapter: Pllama_lora_adapter); cdecl;
-  llama_control_vector_apply: function(lctx: Pllama_context; const data: PSingle; len: NativeUInt; n_embd: Int32; il_start: Int32; il_end: Int32): Int32; cdecl;
+  llama_adapter_lora_init: function(model: Pllama_model; const path_lora: PUTF8Char): Pllama_adapter_lora; cdecl;
+  llama_adapter_lora_free: procedure(adapter: Pllama_adapter_lora); cdecl;
+  llama_set_adapter_lora: function(ctx: Pllama_context; adapter: Pllama_adapter_lora; scale: Single): Int32; cdecl;
+  llama_rm_adapter_lora: function(ctx: Pllama_context; adapter: Pllama_adapter_lora): Int32; cdecl;
+  llama_clear_adapter_lora: procedure(ctx: Pllama_context); cdecl;
+  llama_apply_adapter_cvec: function(ctx: Pllama_context; const data: PSingle; len: NativeUInt; n_embd: Int32; il_start: Int32; il_end: Int32): Int32; cdecl;
   llama_kv_cache_view_init: function(const ctx: Pllama_context; n_seq_max: Int32): llama_kv_cache_view; cdecl;
   llama_kv_cache_view_free: procedure(view: Pllama_kv_cache_view); cdecl;
   llama_kv_cache_view_update: procedure(const ctx: Pllama_context; view: Pllama_kv_cache_view); cdecl;
@@ -3000,33 +2917,50 @@ var
   llama_get_embeddings: function(ctx: Pllama_context): PSingle; cdecl;
   llama_get_embeddings_ith: function(ctx: Pllama_context; i: Int32): PSingle; cdecl;
   llama_get_embeddings_seq: function(ctx: Pllama_context; seq_id: llama_seq_id): PSingle; cdecl;
-  llama_token_get_text: function(const model: Pllama_model; token: llama_token): PUTF8Char; cdecl;
-  llama_token_get_score: function(const model: Pllama_model; token: llama_token): Single; cdecl;
-  llama_token_get_attr: function(const model: Pllama_model; token: llama_token): llama_token_attr; cdecl;
-  llama_token_is_eog: function(const model: Pllama_model; token: llama_token): Boolean; cdecl;
-  llama_token_is_control: function(const model: Pllama_model; token: llama_token): Boolean; cdecl;
-  llama_token_bos: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_eos: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_eot: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_cls: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_sep: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_nl: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_pad: function(const model: Pllama_model): llama_token; cdecl;
-  llama_add_bos_token: function(const model: Pllama_model): Boolean; cdecl;
-  llama_add_eos_token: function(const model: Pllama_model): Boolean; cdecl;
-  llama_token_prefix: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_middle: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_suffix: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_fim_pre: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_fim_suf: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_fim_mid: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_fim_pad: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_fim_rep: function(const model: Pllama_model): llama_token; cdecl;
-  llama_token_fim_sep: function(const model: Pllama_model): llama_token; cdecl;
-  llama_tokenize: function(const model: Pllama_model; const text: PUTF8Char; text_len: Int32; tokens: Pllama_token; n_tokens_max: Int32; add_special: Boolean; parse_special: Boolean): Int32; cdecl;
-  llama_token_to_piece: function(const model: Pllama_model; token: llama_token; buf: PUTF8Char; length: Int32; lstrip: Int32; special: Boolean): Int32; cdecl;
-  llama_detokenize: function(const model: Pllama_model; const tokens: Pllama_token; n_tokens: Int32; text: PUTF8Char; text_len_max: Int32; remove_special: Boolean; unparse_special: Boolean): Int32; cdecl;
-  llama_chat_apply_template: function(const model: Pllama_model; const tmpl: PUTF8Char; const chat: Pllama_chat_message; n_msg: NativeUInt; add_ass: Boolean; buf: PUTF8Char; length: Int32): Int32; cdecl;
+  llama_vocab_get_text: function(const vocab: Pllama_vocab; token: llama_token): PUTF8Char; cdecl;
+  llama_vocab_get_score: function(const vocab: Pllama_vocab; token: llama_token): Single; cdecl;
+  llama_vocab_get_attr: function(const vocab: Pllama_vocab; token: llama_token): llama_token_attr; cdecl;
+  llama_vocab_is_eog: function(const vocab: Pllama_vocab; token: llama_token): Boolean; cdecl;
+  llama_vocab_is_control: function(const vocab: Pllama_vocab; token: llama_token): Boolean; cdecl;
+  llama_vocab_bos: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_vocab_eos: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_vocab_eot: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_vocab_sep: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_vocab_nl: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_vocab_pad: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_vocab_get_add_bos: function(const vocab: Pllama_vocab): Boolean; cdecl;
+  llama_vocab_get_add_eos: function(const vocab: Pllama_vocab): Boolean; cdecl;
+  llama_vocab_fim_pre: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_vocab_fim_suf: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_vocab_fim_mid: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_vocab_fim_pad: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_vocab_fim_rep: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_vocab_fim_sep: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_token_get_text: function(const vocab: Pllama_vocab; token: llama_token): PUTF8Char; cdecl;
+  llama_token_get_score: function(const vocab: Pllama_vocab; token: llama_token): Single; cdecl;
+  llama_token_get_attr: function(const vocab: Pllama_vocab; token: llama_token): llama_token_attr; cdecl;
+  llama_token_is_eog: function(const vocab: Pllama_vocab; token: llama_token): Boolean; cdecl;
+  llama_token_is_control: function(const vocab: Pllama_vocab; token: llama_token): Boolean; cdecl;
+  llama_token_bos: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_token_eos: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_token_eot: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_token_cls: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_token_sep: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_token_nl: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_token_pad: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_add_bos_token: function(const vocab: Pllama_vocab): Boolean; cdecl;
+  llama_add_eos_token: function(const vocab: Pllama_vocab): Boolean; cdecl;
+  llama_token_fim_pre: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_token_fim_suf: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_token_fim_mid: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_token_fim_pad: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_token_fim_rep: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_token_fim_sep: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_vocab_cls: function(const vocab: Pllama_vocab): llama_token; cdecl;
+  llama_tokenize: function(const vocab: Pllama_vocab; const text: PUTF8Char; text_len: Int32; tokens: Pllama_token; n_tokens_max: Int32; add_special: Boolean; parse_special: Boolean): Int32; cdecl;
+  llama_token_to_piece: function(const vocab: Pllama_vocab; token: llama_token; buf: PUTF8Char; length: Int32; lstrip: Int32; special: Boolean): Int32; cdecl;
+  llama_detokenize: function(const vocab: Pllama_vocab; const tokens: Pllama_token; n_tokens: Int32; text: PUTF8Char; text_len_max: Int32; remove_special: Boolean; unparse_special: Boolean): Int32; cdecl;
+  llama_chat_apply_template: function(const tmpl: PUTF8Char; const chat: Pllama_chat_message; n_msg: NativeUInt; add_ass: Boolean; buf: PUTF8Char; length: Int32): Int32; cdecl;
   llama_chat_builtin_templates: function(output: PPUTF8Char; len: NativeUInt): Int32; cdecl;
   llama_sampler_name: function(const smpl: Pllama_sampler): PUTF8Char; cdecl;
   llama_sampler_accept: procedure(smpl: Pllama_sampler; token: llama_token); cdecl;
@@ -3051,11 +2985,11 @@ var
   llama_sampler_init_xtc: function(p: Single; t: Single; min_keep: NativeUInt; seed: UInt32): Pllama_sampler; cdecl;
   llama_sampler_init_mirostat: function(n_vocab: Int32; seed: UInt32; tau: Single; eta: Single; m: Int32): Pllama_sampler; cdecl;
   llama_sampler_init_mirostat_v2: function(seed: UInt32; tau: Single; eta: Single): Pllama_sampler; cdecl;
-  llama_sampler_init_grammar: function(const model: Pllama_model; const grammar_str: PUTF8Char; const grammar_root: PUTF8Char): Pllama_sampler; cdecl;
+  llama_sampler_init_grammar: function(const vocab: Pllama_vocab; const grammar_str: PUTF8Char; const grammar_root: PUTF8Char): Pllama_sampler; cdecl;
   llama_sampler_init_penalties: function(penalty_last_n: Int32; penalty_repeat: Single; penalty_freq: Single; penalty_present: Single): Pllama_sampler; cdecl;
-  llama_sampler_init_dry: function(const model: Pllama_model; dry_multiplier: Single; dry_base: Single; dry_allowed_length: Int32; dry_penalty_last_n: Int32; seq_breakers: PPUTF8Char; num_breakers: NativeUInt): Pllama_sampler; cdecl;
+  llama_sampler_init_dry: function(const vocab: Pllama_vocab; n_ctx_train: Int32; dry_multiplier: Single; dry_base: Single; dry_allowed_length: Int32; dry_penalty_last_n: Int32; seq_breakers: PPUTF8Char; num_breakers: NativeUInt): Pllama_sampler; cdecl;
   llama_sampler_init_logit_bias: function(n_vocab: Int32; n_logit_bias: Int32; const logit_bias: Pllama_logit_bias): Pllama_sampler; cdecl;
-  llama_sampler_init_infill: function(const model: Pllama_model): Pllama_sampler; cdecl;
+  llama_sampler_init_infill: function(const vocab: Pllama_vocab): Pllama_sampler; cdecl;
   llama_sampler_get_seed: function(const smpl: Pllama_sampler): UInt32; cdecl;
   llama_sampler_sample: function(smpl: Pllama_sampler; ctx: Pllama_context; idx: Int32): llama_token; cdecl;
   llama_split_path: function(split_path: PUTF8Char; maxlen: NativeUInt; const path_prefix: PUTF8Char; split_no: Integer; split_count: Integer): Integer; cdecl;
@@ -3554,7 +3488,8 @@ type
     FLineOutputRightMargin: UInt32;
     FLineOutputMaxLineLength: UInt32;
     FTokenResponse: TTokenResponse;
-    function  TokenToPiece(const AContext: Pllama_context; const AToken: llama_token; const ASpecial: Boolean): string;
+    FAddAssistant: Boolean;
+    function  TokenToPiece(const AVocab: Pllama_vocab; const AContext: Pllama_context; const AToken: llama_token; const ASpecial: Boolean): string;
     function  CalcPerformance(const AContext: Pllama_context): TLumina.PerformanceResult;
     procedure SetError(const AText: string; const AArgs: array of const);
     function  OnCancel(): Boolean;
@@ -3741,7 +3676,7 @@ type
     ///  <remarks>
     ///    Supports both CPU and GPU acceleration, with configurable threading for optimal performance.
     ///  </remarks>
-    function  LoadModel(const AModelFilename: string; const ATemplate: string=''; const AMaxContext: UInt32=512; const AGPULayers: Int32=-1; const AMaxThreads: Int32=4): Boolean;
+    function  LoadModel(const AModelFilename: string; const ATemplate: string=''; const AMaxContext: UInt32=512; const AGPULayers: Int32=-1; const AMaxThreads: Int32=4; const AAddAssistant: Boolean=True): Boolean;
 
     ///  <summary>
     ///    Unloads the currently loaded model, freeing associated resources.
@@ -4021,6 +3956,7 @@ begin
   ggml_gallocr_new_n := GetProcAddress(aDLLHandle, 'ggml_gallocr_new_n');
   ggml_gallocr_reserve := GetProcAddress(aDLLHandle, 'ggml_gallocr_reserve');
   ggml_gallocr_reserve_n := GetProcAddress(aDLLHandle, 'ggml_gallocr_reserve_n');
+  ggml_gated_linear_attn := GetProcAddress(aDLLHandle, 'ggml_gated_linear_attn');
   ggml_gelu := GetProcAddress(aDLLHandle, 'ggml_gelu');
   ggml_gelu_inplace := GetProcAddress(aDLLHandle, 'ggml_gelu_inplace');
   ggml_gelu_quick := GetProcAddress(aDLLHandle, 'ggml_gelu_quick');
@@ -4256,64 +4192,11 @@ begin
   ggml_view_tensor := GetProcAddress(aDLLHandle, 'ggml_view_tensor');
   ggml_win_part := GetProcAddress(aDLLHandle, 'ggml_win_part');
   ggml_win_unpart := GetProcAddress(aDLLHandle, 'ggml_win_unpart');
-  gguf_add_tensor := GetProcAddress(aDLLHandle, 'gguf_add_tensor');
-  gguf_find_key := GetProcAddress(aDLLHandle, 'gguf_find_key');
-  gguf_find_tensor := GetProcAddress(aDLLHandle, 'gguf_find_tensor');
-  gguf_free := GetProcAddress(aDLLHandle, 'gguf_free');
-  gguf_get_alignment := GetProcAddress(aDLLHandle, 'gguf_get_alignment');
-  gguf_get_arr_data := GetProcAddress(aDLLHandle, 'gguf_get_arr_data');
-  gguf_get_arr_n := GetProcAddress(aDLLHandle, 'gguf_get_arr_n');
-  gguf_get_arr_str := GetProcAddress(aDLLHandle, 'gguf_get_arr_str');
-  gguf_get_arr_type := GetProcAddress(aDLLHandle, 'gguf_get_arr_type');
-  gguf_get_data := GetProcAddress(aDLLHandle, 'gguf_get_data');
-  gguf_get_data_offset := GetProcAddress(aDLLHandle, 'gguf_get_data_offset');
-  gguf_get_key := GetProcAddress(aDLLHandle, 'gguf_get_key');
-  gguf_get_kv_type := GetProcAddress(aDLLHandle, 'gguf_get_kv_type');
-  gguf_get_meta_data := GetProcAddress(aDLLHandle, 'gguf_get_meta_data');
-  gguf_get_meta_size := GetProcAddress(aDLLHandle, 'gguf_get_meta_size');
-  gguf_get_n_kv := GetProcAddress(aDLLHandle, 'gguf_get_n_kv');
-  gguf_get_n_tensors := GetProcAddress(aDLLHandle, 'gguf_get_n_tensors');
-  gguf_get_tensor_name := GetProcAddress(aDLLHandle, 'gguf_get_tensor_name');
-  gguf_get_tensor_offset := GetProcAddress(aDLLHandle, 'gguf_get_tensor_offset');
-  gguf_get_tensor_type := GetProcAddress(aDLLHandle, 'gguf_get_tensor_type');
-  gguf_get_val_bool := GetProcAddress(aDLLHandle, 'gguf_get_val_bool');
-  gguf_get_val_data := GetProcAddress(aDLLHandle, 'gguf_get_val_data');
-  gguf_get_val_f32 := GetProcAddress(aDLLHandle, 'gguf_get_val_f32');
-  gguf_get_val_f64 := GetProcAddress(aDLLHandle, 'gguf_get_val_f64');
-  gguf_get_val_i16 := GetProcAddress(aDLLHandle, 'gguf_get_val_i16');
-  gguf_get_val_i32 := GetProcAddress(aDLLHandle, 'gguf_get_val_i32');
-  gguf_get_val_i64 := GetProcAddress(aDLLHandle, 'gguf_get_val_i64');
-  gguf_get_val_i8 := GetProcAddress(aDLLHandle, 'gguf_get_val_i8');
-  gguf_get_val_str := GetProcAddress(aDLLHandle, 'gguf_get_val_str');
-  gguf_get_val_u16 := GetProcAddress(aDLLHandle, 'gguf_get_val_u16');
-  gguf_get_val_u32 := GetProcAddress(aDLLHandle, 'gguf_get_val_u32');
-  gguf_get_val_u64 := GetProcAddress(aDLLHandle, 'gguf_get_val_u64');
-  gguf_get_val_u8 := GetProcAddress(aDLLHandle, 'gguf_get_val_u8');
-  gguf_get_version := GetProcAddress(aDLLHandle, 'gguf_get_version');
-  gguf_init_empty := GetProcAddress(aDLLHandle, 'gguf_init_empty');
-  gguf_init_from_file := GetProcAddress(aDLLHandle, 'gguf_init_from_file');
-  gguf_remove_key := GetProcAddress(aDLLHandle, 'gguf_remove_key');
-  gguf_set_arr_data := GetProcAddress(aDLLHandle, 'gguf_set_arr_data');
-  gguf_set_arr_str := GetProcAddress(aDLLHandle, 'gguf_set_arr_str');
-  gguf_set_kv := GetProcAddress(aDLLHandle, 'gguf_set_kv');
-  gguf_set_tensor_data := GetProcAddress(aDLLHandle, 'gguf_set_tensor_data');
-  gguf_set_tensor_type := GetProcAddress(aDLLHandle, 'gguf_set_tensor_type');
-  gguf_set_val_bool := GetProcAddress(aDLLHandle, 'gguf_set_val_bool');
-  gguf_set_val_f32 := GetProcAddress(aDLLHandle, 'gguf_set_val_f32');
-  gguf_set_val_f64 := GetProcAddress(aDLLHandle, 'gguf_set_val_f64');
-  gguf_set_val_i16 := GetProcAddress(aDLLHandle, 'gguf_set_val_i16');
-  gguf_set_val_i32 := GetProcAddress(aDLLHandle, 'gguf_set_val_i32');
-  gguf_set_val_i64 := GetProcAddress(aDLLHandle, 'gguf_set_val_i64');
-  gguf_set_val_i8 := GetProcAddress(aDLLHandle, 'gguf_set_val_i8');
-  gguf_set_val_str := GetProcAddress(aDLLHandle, 'gguf_set_val_str');
-  gguf_set_val_u16 := GetProcAddress(aDLLHandle, 'gguf_set_val_u16');
-  gguf_set_val_u32 := GetProcAddress(aDLLHandle, 'gguf_set_val_u32');
-  gguf_set_val_u64 := GetProcAddress(aDLLHandle, 'gguf_set_val_u64');
-  gguf_set_val_u8 := GetProcAddress(aDLLHandle, 'gguf_set_val_u8');
-  gguf_type_name := GetProcAddress(aDLLHandle, 'gguf_type_name');
-  gguf_write_to_file := GetProcAddress(aDLLHandle, 'gguf_write_to_file');
+  llama_adapter_lora_free := GetProcAddress(aDLLHandle, 'llama_adapter_lora_free');
+  llama_adapter_lora_init := GetProcAddress(aDLLHandle, 'llama_adapter_lora_init');
   llama_add_bos_token := GetProcAddress(aDLLHandle, 'llama_add_bos_token');
   llama_add_eos_token := GetProcAddress(aDLLHandle, 'llama_add_eos_token');
+  llama_apply_adapter_cvec := GetProcAddress(aDLLHandle, 'llama_apply_adapter_cvec');
   llama_attach_threadpool := GetProcAddress(aDLLHandle, 'llama_attach_threadpool');
   llama_backend_free := GetProcAddress(aDLLHandle, 'llama_backend_free');
   llama_backend_init := GetProcAddress(aDLLHandle, 'llama_backend_init');
@@ -4322,8 +4205,8 @@ begin
   llama_batch_init := GetProcAddress(aDLLHandle, 'llama_batch_init');
   llama_chat_apply_template := GetProcAddress(aDLLHandle, 'llama_chat_apply_template');
   llama_chat_builtin_templates := GetProcAddress(aDLLHandle, 'llama_chat_builtin_templates');
+  llama_clear_adapter_lora := GetProcAddress(aDLLHandle, 'llama_clear_adapter_lora');
   llama_context_default_params := GetProcAddress(aDLLHandle, 'llama_context_default_params');
-  llama_control_vector_apply := GetProcAddress(aDLLHandle, 'llama_control_vector_apply');
   llama_copy_state_data := GetProcAddress(aDLLHandle, 'llama_copy_state_data');
   llama_decode := GetProcAddress(aDLLHandle, 'llama_decode');
   llama_detach_threadpool := GetProcAddress(aDLLHandle, 'llama_detach_threadpool');
@@ -4340,6 +4223,7 @@ begin
   llama_get_logits_ith := GetProcAddress(aDLLHandle, 'llama_get_logits_ith');
   llama_get_model := GetProcAddress(aDLLHandle, 'llama_get_model');
   llama_get_state_size := GetProcAddress(aDLLHandle, 'llama_get_state_size');
+  llama_init_from_model := GetProcAddress(aDLLHandle, 'llama_init_from_model');
   llama_kv_cache_can_shift := GetProcAddress(aDLLHandle, 'llama_kv_cache_can_shift');
   llama_kv_cache_clear := GetProcAddress(aDLLHandle, 'llama_kv_cache_clear');
   llama_kv_cache_defrag := GetProcAddress(aDLLHandle, 'llama_kv_cache_defrag');
@@ -4356,16 +4240,13 @@ begin
   llama_load_model_from_file := GetProcAddress(aDLLHandle, 'llama_load_model_from_file');
   llama_load_session_file := GetProcAddress(aDLLHandle, 'llama_load_session_file');
   llama_log_set := GetProcAddress(aDLLHandle, 'llama_log_set');
-  llama_lora_adapter_clear := GetProcAddress(aDLLHandle, 'llama_lora_adapter_clear');
-  llama_lora_adapter_free := GetProcAddress(aDLLHandle, 'llama_lora_adapter_free');
-  llama_lora_adapter_init := GetProcAddress(aDLLHandle, 'llama_lora_adapter_init');
-  llama_lora_adapter_remove := GetProcAddress(aDLLHandle, 'llama_lora_adapter_remove');
-  llama_lora_adapter_set := GetProcAddress(aDLLHandle, 'llama_lora_adapter_set');
   llama_max_devices := GetProcAddress(aDLLHandle, 'llama_max_devices');
+  llama_model_chat_template := GetProcAddress(aDLLHandle, 'llama_model_chat_template');
   llama_model_decoder_start_token := GetProcAddress(aDLLHandle, 'llama_model_decoder_start_token');
   llama_model_default_params := GetProcAddress(aDLLHandle, 'llama_model_default_params');
   llama_model_desc := GetProcAddress(aDLLHandle, 'llama_model_desc');
   llama_model_free := GetProcAddress(aDLLHandle, 'llama_model_free');
+  llama_model_get_vocab := GetProcAddress(aDLLHandle, 'llama_model_get_vocab');
   llama_model_has_decoder := GetProcAddress(aDLLHandle, 'llama_model_has_decoder');
   llama_model_has_encoder := GetProcAddress(aDLLHandle, 'llama_model_has_encoder');
   llama_model_is_recurrent := GetProcAddress(aDLLHandle, 'llama_model_is_recurrent');
@@ -4374,9 +4255,15 @@ begin
   llama_model_meta_key_by_index := GetProcAddress(aDLLHandle, 'llama_model_meta_key_by_index');
   llama_model_meta_val_str := GetProcAddress(aDLLHandle, 'llama_model_meta_val_str');
   llama_model_meta_val_str_by_index := GetProcAddress(aDLLHandle, 'llama_model_meta_val_str_by_index');
+  llama_model_n_ctx_train := GetProcAddress(aDLLHandle, 'llama_model_n_ctx_train');
+  llama_model_n_embd := GetProcAddress(aDLLHandle, 'llama_model_n_embd');
+  llama_model_n_head := GetProcAddress(aDLLHandle, 'llama_model_n_head');
+  llama_model_n_layer := GetProcAddress(aDLLHandle, 'llama_model_n_layer');
   llama_model_n_params := GetProcAddress(aDLLHandle, 'llama_model_n_params');
   llama_model_quantize := GetProcAddress(aDLLHandle, 'llama_model_quantize');
   llama_model_quantize_default_params := GetProcAddress(aDLLHandle, 'llama_model_quantize_default_params');
+  llama_model_rope_freq_scale_train := GetProcAddress(aDLLHandle, 'llama_model_rope_freq_scale_train');
+  llama_model_rope_type := GetProcAddress(aDLLHandle, 'llama_model_rope_type');
   llama_model_size := GetProcAddress(aDLLHandle, 'llama_model_size');
   llama_n_batch := GetProcAddress(aDLLHandle, 'llama_n_batch');
   llama_n_ctx := GetProcAddress(aDLLHandle, 'llama_n_ctx');
@@ -4399,8 +4286,7 @@ begin
   llama_perf_sampler_reset := GetProcAddress(aDLLHandle, 'llama_perf_sampler_reset');
   llama_pooling_type_rtn := GetProcAddress(aDLLHandle, 'llama_pooling_type');
   llama_print_system_info := GetProcAddress(aDLLHandle, 'llama_print_system_info');
-  llama_rope_freq_scale_train := GetProcAddress(aDLLHandle, 'llama_rope_freq_scale_train');
-  llama_rope_type_rtn := GetProcAddress(aDLLHandle, 'llama_rope_type');
+  llama_rm_adapter_lora := GetProcAddress(aDLLHandle, 'llama_rm_adapter_lora');
   llama_sampler_accept := GetProcAddress(aDLLHandle, 'llama_sampler_accept');
   llama_sampler_apply := GetProcAddress(aDLLHandle, 'llama_sampler_apply');
   llama_sampler_chain_add := GetProcAddress(aDLLHandle, 'llama_sampler_chain_add');
@@ -4434,6 +4320,7 @@ begin
   llama_sampler_sample := GetProcAddress(aDLLHandle, 'llama_sampler_sample');
   llama_save_session_file := GetProcAddress(aDLLHandle, 'llama_save_session_file');
   llama_set_abort_callback := GetProcAddress(aDLLHandle, 'llama_set_abort_callback');
+  llama_set_adapter_lora := GetProcAddress(aDLLHandle, 'llama_set_adapter_lora');
   llama_set_causal_attn := GetProcAddress(aDLLHandle, 'llama_set_causal_attn');
   llama_set_embeddings := GetProcAddress(aDLLHandle, 'llama_set_embeddings');
   llama_set_n_threads := GetProcAddress(aDLLHandle, 'llama_set_n_threads');
@@ -4471,14 +4358,32 @@ begin
   llama_token_get_text := GetProcAddress(aDLLHandle, 'llama_token_get_text');
   llama_token_is_control := GetProcAddress(aDLLHandle, 'llama_token_is_control');
   llama_token_is_eog := GetProcAddress(aDLLHandle, 'llama_token_is_eog');
-  llama_token_middle := GetProcAddress(aDLLHandle, 'llama_token_middle');
   llama_token_nl := GetProcAddress(aDLLHandle, 'llama_token_nl');
   llama_token_pad := GetProcAddress(aDLLHandle, 'llama_token_pad');
-  llama_token_prefix := GetProcAddress(aDLLHandle, 'llama_token_prefix');
   llama_token_sep := GetProcAddress(aDLLHandle, 'llama_token_sep');
-  llama_token_suffix := GetProcAddress(aDLLHandle, 'llama_token_suffix');
   llama_token_to_piece := GetProcAddress(aDLLHandle, 'llama_token_to_piece');
   llama_tokenize := GetProcAddress(aDLLHandle, 'llama_tokenize');
+  llama_vocab_bos := GetProcAddress(aDLLHandle, 'llama_vocab_bos');
+  llama_vocab_cls := GetProcAddress(aDLLHandle, 'llama_vocab_cls');
+  llama_vocab_eos := GetProcAddress(aDLLHandle, 'llama_vocab_eos');
+  llama_vocab_eot := GetProcAddress(aDLLHandle, 'llama_vocab_eot');
+  llama_vocab_fim_mid := GetProcAddress(aDLLHandle, 'llama_vocab_fim_mid');
+  llama_vocab_fim_pad := GetProcAddress(aDLLHandle, 'llama_vocab_fim_pad');
+  llama_vocab_fim_pre := GetProcAddress(aDLLHandle, 'llama_vocab_fim_pre');
+  llama_vocab_fim_rep := GetProcAddress(aDLLHandle, 'llama_vocab_fim_rep');
+  llama_vocab_fim_sep := GetProcAddress(aDLLHandle, 'llama_vocab_fim_sep');
+  llama_vocab_fim_suf := GetProcAddress(aDLLHandle, 'llama_vocab_fim_suf');
+  llama_vocab_get_add_bos := GetProcAddress(aDLLHandle, 'llama_vocab_get_add_bos');
+  llama_vocab_get_add_eos := GetProcAddress(aDLLHandle, 'llama_vocab_get_add_eos');
+  llama_vocab_get_attr := GetProcAddress(aDLLHandle, 'llama_vocab_get_attr');
+  llama_vocab_get_score := GetProcAddress(aDLLHandle, 'llama_vocab_get_score');
+  llama_vocab_get_text := GetProcAddress(aDLLHandle, 'llama_vocab_get_text');
+  llama_vocab_is_control := GetProcAddress(aDLLHandle, 'llama_vocab_is_control');
+  llama_vocab_is_eog := GetProcAddress(aDLLHandle, 'llama_vocab_is_eog');
+  llama_vocab_n_tokens := GetProcAddress(aDLLHandle, 'llama_vocab_n_tokens');
+  llama_vocab_nl := GetProcAddress(aDLLHandle, 'llama_vocab_nl');
+  llama_vocab_pad := GetProcAddress(aDLLHandle, 'llama_vocab_pad');
+  llama_vocab_sep := GetProcAddress(aDLLHandle, 'llama_vocab_sep');
   llama_vocab_type_rtn := GetProcAddress(aDLLHandle, 'llama_vocab_type');
   redirect_cerr_to_callback := GetProcAddress(aDLLHandle, 'redirect_cerr_to_callback');
   restore_cerr := GetProcAddress(aDLLHandle, 'restore_cerr');
@@ -5098,7 +5003,7 @@ end;
 
 {$REGION ' Lumina '}
 { TLumina }
-function TLumina.TokenToPiece(const AContext: Pllama_context; const AToken: llama_token; const ASpecial: Boolean): string;
+function TLumina.TokenToPiece(const AVocab: Pllama_vocab; const AContext: Pllama_context; const AToken: llama_token; const ASpecial: Boolean): string;
 var
   LTokens: Int32;
   LCheck: Int32;
@@ -5106,11 +5011,11 @@ var
 begin
   try
     SetLength(LBuffer, 9);
-    LTokens := llama_token_to_piece(llama_get_model(AContext), AToken, @LBuffer[0], 8, 0, ASpecial);
+    LTokens := llama_token_to_piece(AVocab, AToken, @LBuffer[0], 8, 0, ASpecial);
     if LTokens < 0 then
       begin
         SetLength(LBuffer, (-LTokens)+1);
-        LCheck := llama_token_to_piece(llama_get_model(AContext), AToken, @LBuffer[0], -LTokens, 0, ASpecial);
+        LCheck := llama_token_to_piece(AVocab, AToken, @LBuffer[0], -LTokens, 0, ASpecial);
         Assert(LCheck = -LTokens);
         LBuffer[-LTokens] := #0;
       end
@@ -5326,7 +5231,7 @@ begin
   FInfoCallback.UserData := AUserData;
 end;
 
-function  TLumina.LoadModel(const AModelFilename: string; const ATemplate: string=''; const AMaxContext: UInt32=512; const AGPULayers: Int32=-1; const AMaxThreads: Int32=4): Boolean;
+function  TLumina.LoadModel(const AModelFilename: string; const ATemplate: string; const AMaxContext: UInt32; const AGPULayers: Int32; const AMaxThreads: Int32; const AAddAssistant: Boolean): Boolean;
 begin
   Result := False;
 
@@ -5364,6 +5269,8 @@ begin
     Exit;
   end;
 
+  FAddAssistant := AAddAssistant;
+
   Result := True;
 end;
 
@@ -5399,11 +5306,19 @@ var
   LBuf: array[0..255] of UTF8Char;
   LKey: string;
   LMaxContext: integer;
+  LVocab: Pllama_vocab;
 
   function BuildPrompt(const AModel: Pllama_model; const AText: string): PUTF8Char;
   var
     LChatMsgs: llama_chat_message;
     LSize, LTmplSize: integer;
+
+    function CheckRequiresAssistantEnding(const Template: string): Boolean;
+    begin
+      // Check for specific markers in the generated template
+      Result := (Pos('<END>', Template) > 0) or (Pos('###', Template) > 0);
+    end;
+
   begin
     LChatMsgs.role := 'user';
     LChatMsgs.content := AsUTF8(AText);
@@ -5412,14 +5327,23 @@ var
     SetLength(LBuffer, LSize);
     FillChar(LBuffer[0], LSize, 0);
 
-    LTmplSize := llama_chat_apply_template(AModel, nil, @LChatMsgs, 1, True, @LBuffer[0], LSize);
+    //LTmplSize := llama_chat_apply_template(AModel, nil, @LChatMsgs, 1, True, @LBuffer[0], LSize);
+    LTmplSize := llama_chat_apply_template(nil, @LChatMsgs, 1, FAddAssistant, @LBuffer[0], LSize);
     if LTmplSize > LSize then
     begin
       LBuffer := nil;
       SetLength(LBuffer, LTmplSize);
-      llama_chat_apply_template(AModel, nil, @LChatMsgs, 1, True, @LBuffer[0], LTmplSize);
+      //llama_chat_apply_template(AModel, nil, @LChatMsgs, 1, True, @LBuffer[0], LTmplSize);
+      llama_chat_apply_template(nil, @LChatMsgs, 1, FAddAssistant, @LBuffer[0], LTmplSize);
     end;
     Result := @LBuffer[0];
+
+    if CheckRequiresAssistantEnding(string(Result)) then
+    begin
+      FAddAssistant := True;
+      Result := BuildPrompt(AModel, AText);
+    end;
+
   end;
 
 begin
@@ -5465,11 +5389,13 @@ begin
     LPrompt := UTF8Encode(LText);
   end;
 
-  LNumPrompt := -llama_tokenize(FModel, PUTF8Char(LPrompt), Length(LPrompt), nil, 0, true, true);
+  LVocab := llama_model_get_vocab(FModel);
+
+  LNumPrompt := -llama_tokenize(LVocab, PUTF8Char(LPrompt), Length(LPrompt), nil, 0, true, true);
 
   SetLength(LPromptTokens, LNumPrompt);
 
-  if llama_tokenize(FModel, PUTF8Char(LPrompt), Length(LPrompt), @LPromptTokens[0], Length(LPromptTokens), true, true) < 0 then
+  if llama_tokenize(LVocab, PUTF8Char(LPrompt), Length(LPrompt), @LPromptTokens[0], Length(LPromptTokens), true, true) < 0 then
   begin
     SetError('Failed to tokenize prompt', []);
   end;
@@ -5517,10 +5443,10 @@ begin
     LNumPos := LNumPos + LBatch.n_tokens;
 
     LNewTokenId := llama_sampler_sample(LSmplr, LCtx, -1);
-    if llama_token_is_eog(FModel, LNewTokenId) then
+    if llama_vocab_is_eog(LVocab, LNewTokenId) then
         break;
 
-    LTokenStr := TokenToPiece(LCtx, LNewTokenId, false);
+    LTokenStr := TokenToPiece(LVocab, LCtx, LNewTokenId, false);
     if LFirstToken then
     begin
       LTokenStr := LTokenStr.Trim();
