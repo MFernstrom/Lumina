@@ -184,6 +184,13 @@ Contributions to **✨ Lumina** are highly encouraged! 🌟
 
 Your contributions make a difference! 🙌✨
 
+#### Contributors 👥🤝
+<br/>
+
+<a href="https://github.com/tinyBigGAMES/Lumina/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=tinyBigGAMES/Lumina&max=500&columns=20&anon=1" />
+</a>
+
 ### 📜 Licensing
 
 **Lumina** is distributed under the 🆓 **BSD-3-Clause License**, allowing for redistribution and use in both source and binary forms, with or without modification, under specific conditions. See the [LICENSE](https://github.com/tinyBigGAMES/Lumina?tab=BSD-3-Clause-1-ov-file#BSD-3-Clause-1-ov-file) file for more details.
