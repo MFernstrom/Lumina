@@ -5425,6 +5425,8 @@ var
 begin
   Result := False;
 
+  FTokenResponse := Default(TTokenResponse);
+
   if not Assigned(FModel) then
   begin
     SetError('No model loaded', []);
@@ -5543,6 +5545,18 @@ begin
     end;
 
     LBatch := llama_batch_get_one(@LNewTokenId, 1);
+  end;
+
+  if FTokenResponse.Finalize then
+  begin
+    case FTokenResponse.AddToken('') of
+      tpaAppend: OnNextToken(FTokenResponse.LastWord(False));
+      tpaNewline:
+      begin
+        OnNextToken(#10);
+        OnNextToken(FTokenResponse.LastWord(True));
+      end;
+    end;
   end;
 
   FPerf := CalcPerformance(LCtx);
